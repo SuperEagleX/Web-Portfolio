@@ -1,0 +1,228 @@
+.page {}
+.inner {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  margin-bottom: 32px;
+  transition: color 0.15s;
+}
+.back:hover { color: var(--accent); }
+
+/* Header */
+.header { margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.event {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  font-family: var(--mono);
+}
+.diff {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.date {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+.desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+.tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Content area */
+.contentArea { min-height: 300px; }
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 0;
+  color: var(--text-muted);
+  justify-content: center;
+}
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.noFile {
+  text-align: center;
+  padding: 60px 24px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+}
+.noFileIcon { font-size: 40px; margin-bottom: 16px; }
+.noFile h3 { font-size: 20px; margin-bottom: 10px; }
+.noFile p { font-size: 15px; color: var(--text-secondary); margin: 8px 0; }
+.filePath {
+  display: inline-block;
+  margin: 12px 0;
+  padding: 8px 16px;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent);
+}
+.hint { font-size: 14px !important; color: var(--text-muted) !important; }
+.hint code {
+  background: var(--bg-code);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.error {
+  text-align: center;
+  padding: 80px 24px;
+}
+.error h2 { margin-bottom: 16px; }
+
+/* ─── Notion HTML content styling ─────── */
+.notionContent {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-primary);
+}
+
+.notionContent h1,
+.notionContent h2,
+.notionContent h3,
+.notionContent h4 {
+  font-family: var(--display);
+  font-weight: 700;
+  margin: 36px 0 14px;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+.notionContent h1 { font-size: 32px; }
+.notionContent h2 { font-size: 24px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.notionContent h3 { font-size: 20px; }
+.notionContent h4 { font-size: 17px; }
+
+.notionContent p { margin: 0 0 16px; }
+
+.notionContent a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.notionContent a:hover { color: var(--accent-hover); }
+
+.notionContent code {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--text-code);
+}
+
+.notionContent pre {
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  overflow-x: auto;
+  margin: 20px 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.65;
+  color: #cdd6f4;
+}
+.notionContent pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.notionContent ul,
+.notionContent ol {
+  padding-left: 24px;
+  margin: 0 0 16px;
+}
+.notionContent li { margin: 6px 0; }
+
+.notionContent blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 16px;
+  margin: 20px 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.notionContent img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.notionContent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+}
+.notionContent th,
+.notionContent td {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+.notionContent th {
+  background: var(--surface);
+  font-weight: 600;
+  font-family: var(--display);
+}
+.notionContent tr:nth-child(even) td { background: var(--bg-card); }
+
+.notionContent hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
